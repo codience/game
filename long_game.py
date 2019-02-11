@@ -13,23 +13,24 @@ teki = 0
 your_level = 1
 answer = 0
 answer2 = 0
+level_up = [1,2,3,4,5]
 
 param = [your_level, your_life, cp_life, your_tension, cp_tension, hit, teki, y_at, y_df, c_at, c_df, answer, answer2]
-def your_attack():
+def your_attack(your_tension):
     if your_tension >= 4:
-        y_at = input("攻撃は？上段、下段、クリティカル: ")
+        y_at = input("攻撃は？上段、下段、クリティカル、テンションためる: ")
     else:
         y_at = input("攻撃は？上段、下段、テンションためる: ")
     return y_at
 
-def your_defence():
+def your_defence(cp_tension):
     if cp_tension >= 4:
         y_df = input("防御は？ジャンプ、しゃがむ、クリティカル防御、テンションためる: ")
     else:
         y_df = input("防御は？ジャンプ、しゃがむ、テンションためる: ")
     return y_df
 
-def cp_attack():
+def cp_attack(cp_tension):
     if cp_tension >= 4:
         c_at = random.choice(("攻撃系","クリティカル"))
     else:
@@ -38,7 +39,7 @@ def cp_attack():
         c_at = random.choice(("上段","下段"))
     return c_at
 
-def cp_defence():
+def cp_defence(your_tension):
     if your_tension >= 4:
         c_df = random.choice(("防御系","クリティカル防御"))
     else:
@@ -48,15 +49,21 @@ def cp_defence():
     return c_df
 
 def syutugen(param):
-    param[4] = 0
+    if param[0] <= 0:
+        param[0] = 1
+    param[3] = 1
+    param[4] = 1
     param[1] = param[0] * 10 + 100
+    print("あなたのレベルは" + str(param[0]) + "、あなたの体力は" + str(param[1]))
+    param[0] = int(param[0])
+    param[1] = int(param[1])
     param[6] = random.choice(("ザコ","普通の敵","手強い敵","ボス"))
     if param[6] == "ザコ":
-        cp_life = 50
+        param[2] = 50
     if param[6] == "普通の敵":
-        cp_life = 100
+        param[2] = 100
     if param[6] == "手強い敵":
-        cp_life = 150
+        param[2] = 150
     if param[6] == "ボス":
         param[2] = 200
     print(param[6] + "が現れたようだ・・・") 
@@ -64,8 +71,8 @@ def syutugen(param):
     if param[11] == "はい":
         while True:
                 print("あなたの攻撃！")
-                param[7] = your_attack()
-                param[10] = cp_defence()
+                param[7] = your_attack(param[3])
+                param[10] = cp_defence(param[3])
                 if param[7] == "上段":
                     if param[10] == "ジャンプ" or param[10] == "テンションためる" or param[10] == "クリティカル防御":
                         param[5] = 20 * param[3] + 10 * param[0]
@@ -90,7 +97,8 @@ def syutugen(param):
                         param[5] = 0
                         param[3] = 1
                     else:
-                        param[5] = 999
+                        param[5] = 99
+                        param[3] = 1
                 else:
                     param[5] = 0
                 if param[10] == "テンションためる":
@@ -106,13 +114,13 @@ def syutugen(param):
                 print("敵残りHP　　　{}".format(param[2]))
                 if param[2] <= 0:
                     print("あなたの勝ち！")
-                    param[0] = param[0] + 1
+                    param[0] = param[0] + random.choice(level_up)
                     print("あなたのレベルは" + str(param[0]) + "になった！")
                     break
                 
                 print("敵の攻撃！")
-                param[9] = cp_attack()
-                param[8] = your_defence()
+                param[9] = cp_attack(param[4])
+                param[8] = your_defence(param[4])
                 if param[9] == "上段":
                     if param[8] == "ジャンプ" or param[8] == "テンションためる":
                         param[5] = 30 * param[4]
@@ -137,9 +145,10 @@ def syutugen(param):
                         param[5] = 0
                         param[4] = 1
                     else:
-                        param[5] = 999
+                        param[5] = 99
+                        param[4] = 1
                 else:
-                    param[5] = 0
+                    param[5] = 30 * param[4]
                 if param[8] == "テンションためる":
                     param[3] = param[3] + 1
                 print("敵の攻撃は　{}".format(param[9]))
@@ -156,10 +165,12 @@ def syutugen(param):
                     param[0] = param[0] - 1
                     if param[0] < 1:
                         param[0] = 1
-                    print("あなたのレベルは" + param[0])
+                    print("あなたのレベルは" + str(param[0]))
+                    param[0] = int(param[0])
                     break
     else:
         print("あなたは逃げたため、レベルが１下がってしまった！")
+        param[0] = param[0] - 1
     param[12] = input("ゲームを続けますか？ はい　or　いいえ：")
     if param[12] == "いいえ":
         print("お疲れ様でした。")
