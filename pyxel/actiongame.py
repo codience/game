@@ -30,7 +30,7 @@ class App:
     def __init__(self):
         # ゲームの設定。widthとheightの単位はドット
         # init(width, height, [caption], [fps])
-        pyxel.init(128,128,caption="パックマンぽいゲーム", fps=25)
+        pyxel.init(128,140,caption="パックマンぽいゲーム", fps=25)
         self.pacman = Pacman()
         # 作成したドット絵やタイルマップの情報を読み込む
         pyxel.load('pacman.pyxel')
@@ -45,6 +45,7 @@ class App:
             pyxel.quit()
 
         self.update_pacman_state()
+        self.update_tilemap()
 
 
     # ゲーム内で描画されるドット絵の処理をする
@@ -147,4 +148,12 @@ class App:
         # イメージ０に登録されている(self.pacman.plot_pacman_x_coordinate,0)の座標から
         # 8×8サイズを参照にして、(self.pacman.dot_x,self.pacman.dot_y)の座標に描画する
         pyxel.blt(self.pacman.dot_x,self.pacman.dot_y,0,self.pacman.plot_pacman_x_coordinate,0,8,8)
+    
+    def update_tilemap(self):
+        if pyxel.tilemap(0).get(self.pacman.tile_x,self.pacman.tile_y) == 65:
+            self.pacman.score += 30
+        elif pyxel.tilemap(0).get(self.pacman.tile_x,self.pacman.tile_y) == 64:
+            self.pacman.score += 100
+        pyxel.tilemap(0).set(self.pacman.tile_x,self.pacman.tile_y,5,refimg = 0)
+
 App()
