@@ -48,8 +48,11 @@ class App:
         self.IMG_ID1 = 1
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
-        imgs = pyxel.load('./test.pyxel')
+        #imgs = pyxel.load('./test.pyxel')
 
+        pyxel.image(self.IMG_ID0).load(0, 0, "assets/pyxel_logo_38x16.png")
+        pyxel.image(self.IMG_ID1).load(0, 0, "assets/cat_16x16.png")
+ 
         #pyxel.mouse(True)
 
         self.mcat = cat(self.IMG_ID1)
