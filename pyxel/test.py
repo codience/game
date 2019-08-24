@@ -8,6 +8,8 @@ window_H = 120
 window_W = 160
 cat_H = 16
 cat_W = 16
+enemy_H = 12
+enemy_W = 12
 
 class Vec2:
     def __init__(self,x,y):
@@ -41,6 +43,18 @@ class Ball:
         self.size = size
         self.color = color
 
+class enemy:
+    def __init__(self,img_id):
+        self.pos = Vec2(0.0)
+        self.vec = 0
+        self.speed = 0.02
+        self.img_enemy = img_id
+
+    def update(self, x, y, dx):
+        self.pos.x = x
+        self.pos.y = y
+        self.vec = dx
+
 
 class App:
     def __init__(self):
@@ -48,17 +62,23 @@ class App:
         self.IMG_ID0_y = 65
         self.IMG_ID0 = 1
         self.IMG_ID1 = 0
+        self.IMG_ID2 = 2
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
         #imgs = pyxel.load('./test.pyxel')
 
         pyxel.image(self.IMG_ID0).load(0, 0, "assets/pyxel_logo_38x16.png")
         pyxel.image(self.IMG_ID1).load(0, 0, "assets/cat_16x16.png")
+        pyxel.image(self.IMG_ID2).load(0, 0, "assets/animal_mouse.png")
  
         #pyxel.mouse(True)
 
         self.mcat = cat(self.IMG_ID1)
         self.Balls = []
+        self.enemies = []
+
+        self.flag = 1
+        self.Gameover_flag = 0
 
         pyxel.run(self.update,self.draw)
     
@@ -72,6 +92,10 @@ class App:
             self.mcat.update(pyxel.mouse_x,pyxel.mouse_y,dx)
         elif dy != 0:
             self.mcat.update(pyxel.mouse_x,pyxel.mouse_y,self.mcat.vec)
+
+        if self.flag == 1:
+            new_enemy = enemy(self.IMG_ID2)
+            new_enemy.update(WINDOW_W / 2, WINDOW_H / 2 + 30, self.mcat.vec)    
         
         if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
             new_ball = Ball()
