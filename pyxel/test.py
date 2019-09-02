@@ -45,7 +45,7 @@ class Ball:
 
 class enemy:
     def __init__(self,img_id):
-        self.pos = Vec2(0.0)
+        self.pos = Vec2(0, 0)
         self.vec = 0
         self.speed = 0.02
         self.img_enemy = img_id
@@ -69,7 +69,7 @@ class App:
 
         pyxel.image(self.IMG_ID0).load(0, 0, "assets/pyxel_logo_38x16.png")
         pyxel.image(self.IMG_ID1).load(0, 0, "assets/cat_16x16.png")
-        pyxel.image(self.IMG_ID2).load(0, 0, "assets/animal_mouse.png")
+        pyxel.image(self.IMG_ID2).load(0, 0, "assets/mouse.gif")
  
         #pyxel.mouse(True)
 
@@ -95,11 +95,47 @@ class App:
 
         if self.flag == 1:
             new_enemy = enemy(self.IMG_ID2)
-            new_enemy.update(WINDOW_W / 2, WINDOW_H / 2 + 30, self.mcat.vec)    
+            new_enemy.update(window_W / 2, window_H / 2 + 30, self.mcat.vec)
+            self.enemies.append(new_enemy)
+            
+            new_enemy = enemy(self.IMG_ID2)
+            new_enemy.update(window_W/2 + 30, window_H/2 + 30, self.mcat.vec)
+            self.enemies.append(new_enemy)
+            
+            new_enemy = enemy(self.IMG_ID2)
+            new_enemy.update(window_W/2 - 30, window_H/2 + 30, self.mcat.vec)
+            self.enemies.append(new_enemy)
+            
+            new_enemy = enemy(self.IMG_ID2)
+            new_enemy.update(window_W/2 - 60, window_H/2 + 30, self.mcat.vec)
+            self.enemies.append(new_enemy)
+ 
+            self.flag = 0
+
+        enemy_count = len(self.enemies)
+        for i in range(enemy_count):
+            if ((self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W)
+                and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H) 
+                or (self.mcat.pos.x < self.enemies[i].pos.x)
+                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W)
+                and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H)
+                or (self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W)
+                and (self.mcat.pos.y < self.enemies[i].pos.y)
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H)
+                or (self.mcat.pos.x < self.enemies[i].pos.x)
+                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W)
+                and (self.mcat.pos.y < self.enemies[i].pos.y)
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H)):
+                self.Gameover_flag = 1
+ 
         
         if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
             new_ball = Ball()
-            print('init new ball.')
+            print('init new Ball.')
             print(new_ball.size)
             if self.mcat.vec > 0:
                 new_ball.update(self.mcat.pos.x + cat_W / 2 + 6,
@@ -123,8 +159,20 @@ class App:
                     self.Balls[i].update(self.Balls[i].pos.x - self.Balls[i].speed, 
                                         self.Balls[i].pos.y, 
                                         self.Balls[i].vec, self.Balls[i].size, self.Balls[i].color)
+                
+                enemy_count = len(self.enemies)
+                for j in range(enemy_count):
+                    if ((self.enemies[j].pos.x < self.Balls[i].pos.x)
+                        and (self.Balls[i].pos.x < self.enemies[j].pos.x + enemy_W)
+                        and (self.enemies[j].pos.y < self.Balls[i].pos.y)
+                        and (self.Balls[i].pos.y < self.enemies[j].pos.y + enemy_H)):
+
+                        del self.enemies[j]
+                        break
+
             else:
                 del self.Balls[i]
+                ball_count -= 1
                 break
 
     
@@ -138,15 +186,16 @@ class App:
         else:
             pyxel.blt(self.mcat.pos.x, self.mcat.pos.y, self.IMG_ID1, 0, 0, cat_W, cat_H, 5)
  
-        for ball in self.Balls:
-            pyxel.circ(ball.pos.x, ball.pos.y, ball.size, ball.color)
+        for Ball in self.Balls:
+            pyxel.circ(Ball.pos.x, Ball.pos.y, Ball.size, Ball.color)
 
-    # def cat(self):
-    #     x = pyxel.mouse_x
-    #     y = pyxel.mouse_y
-    #     if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON):
-    #         pyxel.blt(x,y,0,0,0,-cat_W,cat_H,5)
-    #     else:
-    #         pyxel.blt(x,y,0,0,0,cat_W,cat_H,5)
+        for enemy in self.enemies:
+            if enemy.vec > 0:
+                pyxel.blt(enemy.pos.x, enemy.pos.y, enemy.img_enemy, 0, 0, -enemy_W, enemy_H, 11)
+            else:
+                pyxel.blt(enemy.pos.x, enemy.pos.y, enemy.img_enemy, 0, 0, enemy_W, enemy_H, 11)
+
+        if self.Gameover_flag == 1:
+            pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Game Over", 8)
 
 App()
