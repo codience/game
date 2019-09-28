@@ -1,16 +1,16 @@
 import numpy as np
 import pyxel
 from PIL import Image as PilImage
-
+from time import sleep
 import pprint
 import random
 
 window_H = 120
 window_W = 160
-cat_H = 16
-cat_W = 16
-enemy_H = 16
-enemy_W = 24
+cat_H = 14
+cat_W = 14
+enemy_H = 12
+enemy_W = 18
 
 class Vec2:
     def __init__(self,x,y):
@@ -64,11 +64,20 @@ class App:
         self.IMG_ID0 = 1
         self.IMG_ID1 = 0
         self.IMG_ID2 = 2
+        self.SOUND_1 = 10
+        self.gameover = False
+        self.now_flame = 999999999
+
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
+
+        pyxel.load('./a.pyxel')
+
         pyxel.image(self.IMG_ID0).load(0, 0, "assets/pyxel_logo_38x16.png")
         pyxel.image(self.IMG_ID1).load(0, 0, "assets/cat_16x16.png")
         pyxel.image(self.IMG_ID2).load(0, 0, "assets/mouse.gif")
+
+
  
         #pyxel.mouse(True)
 
@@ -80,6 +89,9 @@ class App:
         self.Gameover_flag = 0
 
         self.score1 = 0
+
+        pyxel.play(1, 1)
+        pyxel.play(0, [0,6,7,2,3,2,4,5])
 
         pyxel.run(self.update,self.draw)
     
@@ -135,26 +147,27 @@ class App:
 
             #当たり判定（敵キャラと猫）
             if ((self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
-                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 5)
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 10 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
-                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 5) 
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 10 ) 
                 or (self.mcat.pos.x < self.enemies[i].pos.x)
                 and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W)
                 and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
-                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 5)
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 10 )
                 or (self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
-                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W -5)
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 10 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y)
-                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 5)
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 10 )
                 or (self.mcat.pos.x < self.enemies[i].pos.x)
-                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W - 5)
+                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W - 10 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y)
-                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 5)):
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 10 )):
                 self.Gameover_flag = 1
  
         
         if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
             new_ball = Ball()
+            pyxel.play(3, 10, loop=False)
             print('init new Ball.')
             print(new_ball.size)
             if self.mcat.vec > 0:
@@ -227,7 +240,16 @@ class App:
                 pyxel.blt(enemy.pos.x, enemy.pos.y, enemy.img_enemy, 0, 0, enemy_W, enemy_H, 11)
 
         #game over
+        if self.Gameover_flag == 1 and self.gameover == False:
+            pyxel.stop()
+            if self.gameover == False:
+                self.gameover = True
+                self.now_flame = pyxel.frame_count
+
         if self.Gameover_flag == 1:
             pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Game Over", 8)
+
+        if pyxel.frame_count > self.now_flame + 20:
+            pyxel.quit()
 
 App()
