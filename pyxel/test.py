@@ -215,6 +215,8 @@ class App:
         pyxel.cls(0)
         pyxel.text(55,40,"codience",pyxel.frame_count % 16)
         pyxel.blt(0,0,0,0,0,0,38,16)
+
+        clear_flag = 0
         
         #score
         score_x = 2
@@ -245,11 +247,22 @@ class App:
             if self.gameover == False:
                 self.gameover = True
                 self.now_flame = pyxel.frame_count
+                if pyxel.frame_count > self.now_flame + 20:
+                    pyxel.quit()
 
         if self.Gameover_flag == 1:
             pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Game Over", 8)
 
-        if pyxel.frame_count > self.now_flame + 20:
-            pyxel.quit()
+        if self.score1 >= 2000:
+            clear_flag = 1
 
+        if clear_flag == 1:
+            pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Clear!!", 8)
+            pyxel.stop()
+            if self.gameover == False:
+                self.now_flame = pyxel.frame_count
+                if pyxel.frame_count > self.now_flame + 20:
+                    pyxel.quit()
+
+        
 App()
