@@ -66,7 +66,8 @@ class App:
         self.IMG_ID2 = 2
         self.SOUND_1 = 10
         self.gameover = False
-        self.now_flame = 999999999
+        self.clear = False
+        self.now_flame = 0
 
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
@@ -216,7 +217,7 @@ class App:
         pyxel.text(55,40,"codience",pyxel.frame_count % 16)
         pyxel.blt(0,0,0,0,0,0,38,16)
 
-        clear_flag = 0
+        self.clear_flag = 0
         
         #score
         score_x = 2
@@ -242,27 +243,39 @@ class App:
                 pyxel.blt(enemy.pos.x, enemy.pos.y, enemy.img_enemy, 0, 0, enemy_W, enemy_H, 11)
 
         #game over
-        if self.Gameover_flag == 1 and self.gameover == False:
-            pyxel.stop()
-            if self.gameover == False:
-                self.gameover = True
-                self.now_flame = pyxel.frame_count
-                if pyxel.frame_count > self.now_flame + 20:
-                    pyxel.quit()
+       
 
         if self.Gameover_flag == 1:
             pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Game Over", 8)
-
-        if self.score1 >= 2000:
-            clear_flag = 1
-
-        if clear_flag == 1:
-            pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Clear!!", 8)
             pyxel.stop()
             if self.gameover == False:
                 self.now_flame = pyxel.frame_count
-                if pyxel.frame_count > self.now_flame + 20:
-                    pyxel.quit()
+                self.gameover = True
+            if pyxel.frame_count > self.now_flame + 20:
+                pyxel.quit()
+
+        
+
+        #if self.Gameover_flag == 1:
+            
+
+        if self.score1 >= 100:
+            self.clear_flag = 1
+            pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Clear!!", 8)
+            pyxel.stop()
+            if self.clear == False:
+                self.now_flame = pyxel.frame_count
+                self.clear = True
+            if pyxel.frame_count > self.now_flame + 20:
+                pyxel.quit()
+
+        
+
+        #if self.clear_flag == 1:
+            
+
+        #if self.clear_flag == 1 and self.clear == False:
+            
 
         
 App()
