@@ -67,6 +67,8 @@ class App:
         self.SOUND_1 = 10
         self.gameover = False
         self.clear = False
+        self.clear_flag = False
+        self.clear_message = None
         self.now_flame = 0
 
 
@@ -148,29 +150,27 @@ class App:
 
             #当たり判定（敵キャラと猫）
             if ((self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
-                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 10 )
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 7 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
-                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 10 ) 
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 7 ) 
                 or (self.mcat.pos.x < self.enemies[i].pos.x)
                 and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W)
                 and (self.mcat.pos.y < self.enemies[i].pos.y + enemy_H)
-                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 10 )
+                and (self.enemies[i].pos.y + enemy_H < self.mcat.pos.y + cat_H - 7 )
                 or (self.mcat.pos.x < self.enemies[i].pos.x + enemy_W)
-                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 10 )
+                and (self.enemies[i].pos.x + enemy_W < self.mcat.pos.x + cat_W - 7 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y)
-                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 10 )
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 7 )
                 or (self.mcat.pos.x < self.enemies[i].pos.x)
-                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W - 10 )
+                and (self.enemies[i].pos.x < self.mcat.pos.x + cat_W - 7 )
                 and (self.mcat.pos.y < self.enemies[i].pos.y)
-                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 10 )):
+                and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 7 )):
                 self.Gameover_flag = 1
  
         
         if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
             new_ball = Ball()
             pyxel.play(3, 10, loop=False)
-            print('init new Ball.')
-            print(new_ball.size)
             if self.mcat.vec > 0:
                 new_ball.update(self.mcat.pos.x + cat_W / 2 + 6,
                                 self.mcat.pos.y + cat_H / 2,
@@ -180,7 +180,6 @@ class App:
                                 self.mcat.pos.y + cat_H / 2,
                                 self.mcat.vec, new_ball.size, new_ball.color)
             self.Balls.append(new_ball)
-            pprint.pprint(self.Balls)
 
         ball_count = len(self.Balls)
         for i in range(ball_count):
@@ -201,11 +200,15 @@ class App:
                         and (self.enemies[j].pos.y < self.Balls[i].pos.y)
                         and (self.Balls[i].pos.y < self.enemies[j].pos.y + enemy_H)):
 
-                        del self.enemies[j]
+                        del self.enemies[j] # Balls[i]の座標と合致したenemies[j]をdelete2
                         if not self.Gameover_flag:
-                            self.score1 += 100
+                            self.score1 += 100 # score加算
+                            # 敵を倒して、スコアを加算したあとの処理
+                            if random.randint(1, 33) == 1: # 3.3パーセント
+                                self.clear_message = "Extra Clear"
+                                self.clear_flag = True
                         break
-
+                        
             else:
                 del self.Balls[i]
                 ball_count -= 1
@@ -216,8 +219,6 @@ class App:
         pyxel.cls(0)
         pyxel.text(55,40,"codience",pyxel.frame_count % 16)
         pyxel.blt(0,0,0,0,0,0,38,16)
-
-        self.clear_flag = 0
         
         #score
         score_x = 2
@@ -243,8 +244,6 @@ class App:
                 pyxel.blt(enemy.pos.x, enemy.pos.y, enemy.img_enemy, 0, 0, enemy_W, enemy_H, 11)
 
         #game over
-       
-
         if self.Gameover_flag == 1:
             pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Game Over", 8)
             pyxel.stop()
@@ -254,28 +253,20 @@ class App:
             if pyxel.frame_count > self.now_flame + 20:
                 pyxel.quit()
 
-        
+        if self.score1 >= 5000:
+            self.clear_message = "Normal Clear"
+            self.clear_flag = True
 
-        #if self.Gameover_flag == 1:
-            
+        if self.clear_flag == True:
+            self.raise_clear(clear_text=self.clear_message)
 
-        if self.score1 >= 100:
-            self.clear_flag = 1
-            pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, "Clear!!", 8)
-            pyxel.stop()
-            if self.clear == False:
-                self.now_flame = pyxel.frame_count
-                self.clear = True
-            if pyxel.frame_count > self.now_flame + 20:
-                pyxel.quit()
-
-        
-
-        #if self.clear_flag == 1:
-            
-
-        #if self.clear_flag == 1 and self.clear == False:
-            
-
-        
+    def raise_clear(self, clear_text):
+        pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, clear_text, 8)
+        pyxel.stop()
+        if self.clear == False:
+            self.now_flame = pyxel.frame_count
+            self.clear = True
+        if pyxel.frame_count > self.now_flame + 20:
+            pyxel.quit()
+   
 App()
