@@ -68,8 +68,11 @@ class App:
         self.gameover = False
         self.clear = False
         self.clear_flag = False
+        self.lucky_flag = False
         self.clear_message = None
+        self.lucky_massage = "Lucky Point!!"
         self.now_flame = 0
+        self.lucky = False
 
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
@@ -204,9 +207,11 @@ class App:
                         if not self.Gameover_flag:
                             self.score1 += 100 # score加算
                             # 敵を倒して、スコアを加算したあとの処理
-                            if random.randint(1, 33) == 1: # 3.3パーセント
-                                self.clear_message = "Extra Clear"
-                                self.clear_flag = True
+                            if random.randint(1, 100) == 1: # 1パーセント
+                                self.lucky_message = "Lucky Point!!"
+                                self.lucky_flag = True
+                                self.lucky = True
+
                         break
                         
             else:
@@ -253,12 +258,15 @@ class App:
             if pyxel.frame_count > self.now_flame + 20:
                 pyxel.quit()
 
-        if self.score1 >= 5000:
-            self.clear_message = "Normal Clear"
+        if self.score1 >= 100000:
+            self.clear_message = "Clear!!"
             self.clear_flag = True
 
         if self.clear_flag == True:
-            self.raise_clear(clear_text=self.clear_message)
+            self.raise_clear(clear_text = self.clear_message)
+        
+        if self.lucky_flag == True:
+            self.raise_lucky(lucky_text = self.lucky_massage)
 
     def raise_clear(self, clear_text):
         pyxel.text(self.mcat.pos.x - 10, self.mcat.pos.y - 5, clear_text, 8)
@@ -268,5 +276,20 @@ class App:
             self.clear = True
         if pyxel.frame_count > self.now_flame + 20:
             pyxel.quit()
+    
+    def raise_lucky(self, lucky_text):
+        pyxel.text(self.mcat.pos.x - 10 , self.mcat.pos.y - 5, lucky_text, 8)
+        self.score1 += 50000
+        self.lucky = False
+        self.lucky_flag = False
+
+        #if self.lucky == True:
+        #    self.lucky = False
+        #    self.now_flame = pyxel.frame_count
+        #    if pyxel.frame_count > self.now_flame + 20:
+        #        self.lucky_flag = False
+        
+
+
    
 App()
