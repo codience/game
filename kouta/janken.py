@@ -5,9 +5,9 @@ class okane:
         self.money = start
      def bet(self, start, win):
          if win == True:
-             self.money  *= 2
+             self.money  *= 2 + i * 2
          elif win == False:
-             self.money = 0
+             self.money  /= 2 
      
 
 
@@ -17,8 +17,8 @@ game = okane(start=start)
 battle = int(input("試合回数を入力してください"))
 print("あなたの所持金は", game.money, "＄スタートです！")
 
-for _ in range(battle):
-
+for i in range(battle):
+     print(i)
      hands = ["チョキ","グー","パー"]
      enemy_hand = hands[random.randint(0, 2)]
      my_hand = input("チョキ　グー　パー:")
