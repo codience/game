@@ -73,6 +73,7 @@ class App:
         self.lucky_massage = "Lucky Point!!"
         self.now_flame = 0
         self.lucky = False
+        self.kill_num = 0
 
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
@@ -172,6 +173,7 @@ class App:
  
         
         if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
+            self.kill_num = 0
             new_ball = Ball()
             pyxel.play(3, 10, loop=False)
             if self.mcat.vec > 0:
@@ -204,8 +206,11 @@ class App:
                         and (self.Balls[i].pos.y < self.enemies[j].pos.y + enemy_H)):
 
                         del self.enemies[j] # Balls[i]の座標と合致したenemies[j]をdelete2
+                        self.kill_num += 1
                         if not self.Gameover_flag:
-                            self.score1 += 100 # score加算
+                            self.score1 += self.kill_num * 100 # score加算
+                            if self.kill_num > 1:
+                                pyxel.play(2,9)
                             # 敵を倒して、スコアを加算したあとの処理
                             if random.randint(1, 100) == 1: # 1パーセント
                                 self.lucky_message = "Lucky Point!!"
