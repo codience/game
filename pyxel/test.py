@@ -284,7 +284,7 @@ class App:
     
     def raise_lucky(self, lucky_text):
         pyxel.text(self.mcat.pos.x - 10 , self.mcat.pos.y - 5, lucky_text, 8)
-        self.score1 += 50000
+        self.score1 += 30000
         self.lucky = False
         self.lucky_flag = False
 
