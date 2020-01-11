@@ -1,14 +1,16 @@
 import random
 
+
 class okane:
      def __init__(self, start=100):
         self.money = start
+        self.win_num = 0
      def bet(self, start, win):
          if win == True:
-             self.money  *= 2 + i * 2
+              self.win_num += 1
+              self.money  *= self.win_num
          elif win == False:
-             self.money  /= 2 
-     
+              pass
 
 
 print("じゃんけんへようこそ！")
@@ -18,7 +20,6 @@ battle = int(input("試合回数を入力してください"))
 print("あなたの所持金は", game.money, "＄スタートです！")
 
 for i in range(battle):
-     print(i)
      hands = ["チョキ","グー","パー"]
      enemy_hand = hands[random.randint(0, 2)]
      my_hand = input("チョキ　グー　パー:")
@@ -38,6 +39,7 @@ for i in range(battle):
           if enemy_hand == "チョキ":
                     print("あなたの勝ちです。")
                     print("おめでとう！賭け金UP！")
+                    game.win_num += 1
                     game.bet(start,True)
           elif enemy_hand == "グー":
                     print("あいこです。")
@@ -60,3 +62,6 @@ for i in range(battle):
                     print("引き分け！賭け金なし！")
      print("相手の数字は", enemy_hand,"でした！")
      print("あなたの所持金は", game.money,"$です！")
+
+print("ゲーム終了です！")
+print("あなたの勝った回数は、", game.win_num, "回でした！")
