@@ -74,6 +74,8 @@ class App:
         self.now_flame = 0
         self.lucky = False
         self.kill_num = 0
+        self.OK = True
+        self.ready = False
 
 
         pyxel.init(window_W,window_H,caption = "Hello pyxel")
@@ -106,6 +108,10 @@ class App:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+
+
+
+
         dx = pyxel.mouse_x - self.mcat.pos.x
         dy = pyxel.mouse_y - self.mcat.pos.y
         if dx != 0:
@@ -129,6 +135,7 @@ class App:
         #     new_enemy = enemy(self.IMG_ID2)
         #     new_enemy.update(window_W/2 - 60, window_H/2 + 30, self.mcat.vec)
         #     self.enemies.append(new_enemy)
+                
 
         if pyxel.frame_count % 30 == 1:
             #from right
@@ -170,11 +177,12 @@ class App:
                 and (self.mcat.pos.y < self.enemies[i].pos.y)
                 and (self.enemies[i].pos.y < self.mcat.pos.y + cat_H - 7 )):
                 self.Gameover_flag = 1
- 
-        
-        if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON):
+
+        if pyxel.btnp(pyxel.KEY_Z) and self.OK == True:
             self.kill_num = 0
             new_ball = Ball()
+            self.OK = False
+            self.ready = True
             pyxel.play(3, 10, loop=False)
             if self.mcat.vec > 0:
                 new_ball.update(self.mcat.pos.x + cat_W / 2 + 6,
@@ -185,6 +193,15 @@ class App:
                                 self.mcat.pos.y + cat_H / 2,
                                 self.mcat.vec, new_ball.size, new_ball.color)
             self.Balls.append(new_ball)
+
+
+
+        if self.OK == False and self.ready == True:
+            self.ready = False
+            self.now_flame = pyxel.frame_count
+
+        if pyxel.frame_count > self.now_flame + 20:
+            self.OK = True    
 
         ball_count = len(self.Balls)
         for i in range(ball_count):
